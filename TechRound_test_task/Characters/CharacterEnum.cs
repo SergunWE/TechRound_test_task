@@ -2,6 +2,8 @@
 {
     public enum CharacterEnum
     {
-        
+        Warrior,
+        Shooter,
+        Wizard
     }
 }

@@ -1,7 +1,9 @@
 ﻿namespace TechRound_test_task
 {
-    public class MagicBook
+    public class MagicBook : MagicalWeapon
     {
-        
+        public MagicBook() : base(name: "Магическая книга", damage: 10, intellect: 5)
+        {
+        }
     }
 }

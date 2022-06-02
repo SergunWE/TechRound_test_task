@@ -14,5 +14,10 @@ namespace TechRound_test_task
             Agility = agility;
             Intellect = intellect;
         }
+
+        public override string ToString()
+        {
+            return "Сила: " + Power + " Ловкость: " + Agility + " Интеллект: " + Intellect;
+        }
     }
 }

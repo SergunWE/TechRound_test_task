@@ -2,6 +2,14 @@
 {
     public enum WeaponEnum
     {
-        
+        Bow,
+        Crossbow,
+        Musket,
+        ShortSword,
+        LongSword,
+        Dagger,
+        Staff,
+        MagicBook,
+        MagicSymbol
     }
 }
