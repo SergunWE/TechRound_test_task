@@ -1,4 +1,6 @@
-﻿namespace TechRound_test_task
+﻿using System;
+
+namespace TechRound_test_task
 {
     public interface ICharacter
     {
@@ -8,5 +10,8 @@
         int ManaPoints();
         MainFeatures GetMainFeatures();
         Weapon GetWeapon();
+        bool Alive();
+
+        object GetCharacterType();
     }
 }

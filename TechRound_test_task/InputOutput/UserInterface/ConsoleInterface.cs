@@ -3,18 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using InputOutput;
+using TechRound_test_task.Damage;
 
 namespace TechRound_test_task.UserInterface
 {
-    public class ConsoleInterfaceTask1 : IUserInterface
+    public class ConsoleInterface : IUserInterface
     {
         private readonly CharacterPool _characterPool;
         private ICharacter _currentCharacter;
+        private readonly NPCPoll _npcPoll;
         private bool _interfaceWork;
 
-        public ConsoleInterfaceTask1()
+        public ConsoleInterface()
         {
             _characterPool = new CharacterPool();
+            _npcPoll = new NPCPoll();
             _interfaceWork = true;
         }
 
@@ -33,10 +36,11 @@ namespace TechRound_test_task.UserInterface
                 Console.WriteLine("2. Создать персонажа");
                 Console.WriteLine("3. Экипировать персонажа");
                 Console.WriteLine("4. Подробная информация о персонаже");
-                Console.WriteLine("5. Выйти");
+                Console.WriteLine("5. Атаковать цель персонажем");
+                Console.WriteLine("6. Выйти");
                 try
                 {
-                    switch (SetInputIntRange(ConsoleInput.GetIntValue(), 1, 5))
+                    switch (SetInputIntRange(ConsoleInput.GetIntValue(), 1, 6))
                     {
                         case 1:
                             SetCharacter();
@@ -51,6 +55,9 @@ namespace TechRound_test_task.UserInterface
                             ShowDetails();
                             break;
                         case 5:
+                            AttackTarget();
+                            break;
+                        case 6:
                             _interfaceWork = false;
                             break;
                     }
@@ -128,17 +135,31 @@ namespace TechRound_test_task.UserInterface
             Console.WriteLine("Выберете, каким оружием экипировать персонажа");
 
             ArrayList enumValues = new ArrayList(Enum.GetValues(typeof(WeaponEnum)));
-            for (int i = 0; i < enumValues.Count; i++)
+            int i = 0;
+            for (i = 0; i < enumValues.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {enumValues[i]?.ToString()}");
             }
-
-            _characterPool.SetWeapon((WeaponEnum)SetInputIntRange(ConsoleInput.GetIntValue(), 
-                1, enumValues.Count) - 1);
             
+            Console.WriteLine($"{i + 1}. Установить неуязвимость");
+            int choice = SetInputIntRange(ConsoleInput.GetIntValue(),
+                1, enumValues.Count + 1);
             Console.Clear();
-            Console.WriteLine($"Оружие {_currentCharacter.GetWeapon().Name} экипировано на персонажа " +
-                              $"{_currentCharacter.CharacterName()}");
+            if (choice == i + 1)
+            {
+                _characterPool.SetInvulnerability();
+                Console.WriteLine("Неуязвимость установлена");
+            }
+            else
+            {
+                _characterPool.SetWeapon((WeaponEnum)choice - 1);
+                Console.WriteLine($"Оружие {_currentCharacter.GetWeapon().Name} экипировано на персонажа " +
+                                  $"{_currentCharacter.CharacterName()}");
+            }
+            
+            
+            
+            
         }
 
         private void PrintCurrentCharacter()
@@ -157,6 +178,7 @@ namespace TechRound_test_task.UserInterface
             }
             Console.Clear();
             Console.WriteLine($"Имя: {_currentCharacter.CharacterName()}");
+            Console.WriteLine($"Жив: {(_currentCharacter.Alive()? "да" : "нет")}");
             Console.WriteLine($"Здоровье: {_currentCharacter.HitPoints()}");
             Console.WriteLine($"Мана: {_currentCharacter.ManaPoints()}");
             Console.WriteLine($"Основные хар. персонажа: {_currentCharacter.GetMainFeatures().ToString()}");
@@ -165,7 +187,48 @@ namespace TechRound_test_task.UserInterface
             Console.WriteLine($"Оружие: {characterWeapon.Name}");
             Console.WriteLine($"Урон оружия: {characterWeapon.Damage}");
             Console.WriteLine($"Требования к оружию: {_currentCharacter.GetWeapon()?.RequiredFeatures.ToString()}");
+        }
 
+        private void AttackTarget()
+        {
+            _currentCharacter = _characterPool.GetCurrentCharacter();
+            if (_currentCharacter == null)
+            {
+                throw new Exception("Не выбран персонаж для атаки");
+            }
+            if (_characterPool.Characters.Count == 0 || _npcPoll.NPCs.Count == 0)
+            {
+                throw new Exception("Нет целей для атаки");
+            }
+            Console.Clear();
+            Console.WriteLine("Выберите цель для атаки");
+            ArrayList damaged = new ArrayList();
+            int i = 0;
+            foreach (var character in _characterPool.Characters)
+            {
+                Console.WriteLine($"{i+1}. {character.CharacterName()}{(character == _currentCharacter?"(Вы)":"")}");
+                damaged.Add(character);
+                i++;
+            }
+
+            foreach (var npc in _npcPoll.NPCs)
+            {
+                Console.WriteLine($"{i+1}. {npc.Name}");
+                damaged.Add(npc);
+                i++;
+            }
+
+            object target = damaged[
+                SetInputIntRange(ConsoleInput.GetIntValue(), 1, damaged.Count) - 1];
+            Console.Clear();
+            if (_currentCharacter is IDamageable attacker && attacker.Attack(target))
+            {
+                Console.WriteLine("Успешная атака");
+            }
+            else
+            {
+                Console.WriteLine("Атаки не произошло");
+            }
         }
 
         private static int SetInputIntRange(int value, int minValue = int.MinValue, int maxValue = int.MaxValue)

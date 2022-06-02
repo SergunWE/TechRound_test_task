@@ -7,7 +7,7 @@ namespace TechRound_test_task
     {
         static void Main(string[] args)
         {
-            IUserInterface userInterface = new ConsoleInterfaceTask1();
+            IUserInterface userInterface = new ConsoleInterface();
             userInterface.Run();
         }
     }

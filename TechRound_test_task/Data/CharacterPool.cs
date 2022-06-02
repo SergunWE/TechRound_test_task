@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TechRound_test_task.Damage;
 
 namespace TechRound_test_task
 {
@@ -12,6 +13,9 @@ namespace TechRound_test_task
         {
             _characters = new List<ICharacter>();
             _currentCharacter = null;
+            CreateCharacter(CharacterEnum.Shooter, hitPoints: 70, manaPoints: 10, agility: 15);
+            CreateCharacter(CharacterEnum.Warrior, hitPoints: 100, manaPoints: 20, power: 10);
+            CreateCharacter(CharacterEnum.Wizard, hitPoints: 60, manaPoints: 60, intellect: 9);
         }
 
         public void CreateCharacter(CharacterEnum characterType,
@@ -46,6 +50,12 @@ namespace TechRound_test_task
         public void SetWeapon(WeaponEnum weaponType)
         {
             _currentCharacter.SetWeapon(WeaponFactory.GetWeapon(weaponType));
+        }
+
+        public void SetInvulnerability()
+        {
+            _characters[_characters.IndexOf(_currentCharacter)] = 
+                new InvulnerabilityCharacter(_currentCharacter, _currentCharacter as IDamageable);
         }
 
         public List<ICharacter> Characters => _characters;
