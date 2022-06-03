@@ -55,7 +55,7 @@ namespace TechRound_test_task
         public void SetInvulnerability()
         {
             _characters[_characters.IndexOf(_currentCharacter)] = 
-                new InvulnerabilityCharacter(_currentCharacter, _currentCharacter as IDamageable);
+                new InvulnerabilityCharacter(_currentCharacter);
         }
 
         public List<ICharacter> Characters => _characters;

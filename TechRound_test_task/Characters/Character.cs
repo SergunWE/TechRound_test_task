@@ -4,7 +4,7 @@ using TechRound_test_task.Damage;
 
 namespace TechRound_test_task
 {
-    public abstract class Character<TWeaponType> : ICharacter, IDamageable where TWeaponType : Weapon
+    public abstract class Character<TWeaponType> : ICharacter where TWeaponType : Weapon
     {
         private int _hitPoints;
         private int _manaPoints;
