@@ -1,6 +1,5 @@
 ﻿using System;
 using InputOutput;
-using TechRound_test_task.Damage;
 
 namespace TechRound_test_task
 {
@@ -14,6 +13,10 @@ namespace TechRound_test_task
         protected MainFeatures MainFeatures;
 
         private bool _alive;
+
+        private Protection _armor;
+        private Protection _helmet;
+        private Protection _jewelry;
 
         protected Character(int hitPoints = 1, int manaPoints = 1, int power = 1, int agility = 1, int intellect = 1)
         {
@@ -32,22 +35,53 @@ namespace TechRound_test_task
             return points > 0;
         }
 
-        public virtual void SetWeapon(Weapon weapon)
+        public abstract void SetWeapon(Weapon weapon);
+        protected void SetWeapon(Weapon weapon, int feature, int requiredFeature, string featureName)
         {
             if (weapon is not TWeaponType)
             {
-                throw new ArgumentException("Персонаж не соответствует классу");
+                throw new ArgumentException("Оружие не соответствует классу персонажа");
             }
-
+            if (feature < requiredFeature)
+            {
+                throw new ArgumentOutOfRangeException
+                (nameof(requiredFeature), 
+                    $"Персонаж не соответствует характеристике {featureName}. " +
+                    $"Требуется {requiredFeature}, значение персонажа {feature}");
+            }
+            
             _weapon = weapon;
         }
 
-        public object GetCharacterType() => this;
+        public abstract void SetProtected(Protection protection);
+        protected void SetProtected<T>(Protection protection) where T: ICharacter
+        {
+            switch (protection)
+            {
+                case Armor<T>:
+                    _armor = protection;
+                    break;
+                case Helmet<T>:
+                    _helmet = protection;
+                    break;
+                case Jewelry<T>:
+                    _jewelry = protection;
+                    break;
+                    default:
+                        throw new ArgumentException("Экипировка не соответствует классу персонажа");
+            }
+        }
+        
         public string CharacterName() => Name;
         public int HitPoints() => _hitPoints;
         public int ManaPoints() => _manaPoints;
         public MainFeatures GetMainFeatures() => MainFeatures;
         public Weapon GetWeapon() => _weapon;
+        public Protection[] GetProtection()
+        {
+            return new[] {_armor, _helmet, _jewelry};
+        }
+
         public bool Alive() => _alive;
         public bool Attack(object target)
         {

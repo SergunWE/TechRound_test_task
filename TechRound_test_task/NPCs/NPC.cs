@@ -1,6 +1,5 @@
 ﻿using System;
 using InputOutput;
-using TechRound_test_task.Damage;
 
 namespace TechRound_test_task
 {

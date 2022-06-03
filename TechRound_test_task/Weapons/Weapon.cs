@@ -4,9 +4,9 @@ namespace TechRound_test_task
 {
     public abstract class Weapon
     {
-        private string _name;
-        private int _damage;
-        private MainFeatures _requiredFeatures;
+        private readonly string _name;
+        private readonly int _damage;
+        private readonly MainFeatures _requiredFeatures;
 
         protected Weapon(string name, int damage = 1, int power = 1, int agility = 1, int intellect = 1)
         {

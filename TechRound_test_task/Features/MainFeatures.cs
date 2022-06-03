@@ -4,12 +4,18 @@ namespace TechRound_test_task
 {
     public struct MainFeatures
     {
-        public int Power { get; private set; }
-        public int Agility { get; private set; }
-        public int Intellect { get; private set; }
+        private const string FeatureSetError = "Параметр не может быть меньше 1";
+        public int Power { get; }
+        public int Agility { get; }
+        public int Intellect { get; }
 
         public MainFeatures(int power = 1, int agility = 1, int intellect = 1)
         {
+            if (power < 1 || agility < 1 || intellect < 1)
+            {
+                throw new ArgumentException(FeatureSetError);
+            }
+
             Power = power;
             Agility = agility;
             Intellect = intellect;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using TechRound_test_task.Damage;
 
 namespace TechRound_test_task
 {
@@ -47,9 +46,14 @@ namespace TechRound_test_task
             _currentCharacter = _characters[index];
         }
 
-        public void SetWeapon(WeaponEnum weaponType)
+        public void SetWeapon(WeaponEnum weapon)
         {
-            _currentCharacter.SetWeapon(WeaponFactory.GetWeapon(weaponType));
+            _currentCharacter.SetWeapon(WeaponFactory.GetWeapon(weapon));
+        }
+
+        public void SetProtection(ProtectionEnum protection)
+        {
+            _currentCharacter.SetProtected(ProtectionFactory.GetProtection(protection));
         }
 
         public void SetInvulnerability()

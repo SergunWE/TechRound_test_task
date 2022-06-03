@@ -12,14 +12,12 @@ namespace TechRound_test_task
 
         public override void SetWeapon(Weapon weapon)
         {
-            if (MainFeatures.Agility < weapon.RequiredFeatures.Agility)
-            {
-                throw new ArgumentOutOfRangeException
-                    (nameof(MainFeatures.Agility), 
-                        $"Персонаж не соответствует характеристике. " +
-                        $"Требуется ловкость {weapon.RequiredFeatures.Agility}, текущая {MainFeatures.Agility}");
-            }
-            base.SetWeapon(weapon);
+            SetWeapon(weapon, MainFeatures.Agility, weapon.RequiredFeatures.Agility, "Ловкость");
+        }
+
+        public override void SetProtected(Protection protection)
+        {
+            SetProtected<Shooter>(protection);
         }
     }
 }

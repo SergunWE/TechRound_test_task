@@ -1,4 +1,4 @@
-﻿namespace TechRound_test_task.Damage
+﻿namespace TechRound_test_task
 {
     public interface IDamageable
     {
