@@ -2,7 +2,7 @@
 {
     public class MagicBook : MagicalWeapon
     {
-        public MagicBook() : base(name: "Магическая книга", damage: 10, intellect: 5)
+        public MagicBook() : base(name: "Магическая книга", damage: 10, specialDamage: 11, intellect: 5)
         {
         }
     }

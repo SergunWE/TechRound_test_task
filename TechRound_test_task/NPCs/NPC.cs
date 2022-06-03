@@ -30,7 +30,7 @@ namespace TechRound_test_task
             return false;
         }
 
-        public bool TakeDamage(int damage)
+        public bool TakeDamage(Weapon weapon)
         {
             ConsoleNotification.PrintNotice(Name + " был атакован");
             return true;

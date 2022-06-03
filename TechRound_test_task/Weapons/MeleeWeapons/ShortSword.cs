@@ -2,7 +2,7 @@
 {
     public class ShortSword : MeleeWeapon
     {
-        public ShortSword() : base(name: "Короткий меч", damage: 10, power: 5)
+        public ShortSword() : base(name: "Короткий меч", damage: 10, specialDamage: 9, power: 5)
         {
         }
     }

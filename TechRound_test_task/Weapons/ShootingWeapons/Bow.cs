@@ -2,7 +2,7 @@
 {
     public class Bow : ShootingWeapon
     {
-        public Bow() : base(name: "Лук", damage: 12, agility: 6)
+        public Bow() : base(name: "Лук", damage: 12, specialDamage: 6, agility: 6)
         {
         }
     }

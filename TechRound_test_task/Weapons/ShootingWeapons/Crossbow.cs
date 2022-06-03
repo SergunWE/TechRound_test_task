@@ -2,7 +2,7 @@
 {
     public class Crossbow : ShootingWeapon
     {
-        public Crossbow() : base(name: "Арбалет", damage: 19, agility: 11)
+        public Crossbow() : base(name: "Арбалет", damage: 19, specialDamage: 15, agility: 11)
         {
         }
     }
