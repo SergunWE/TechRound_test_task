@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using InputOutput;
 
 namespace TechRound_test_task.UserInterface
@@ -9,26 +8,23 @@ namespace TechRound_test_task.UserInterface
     {
         private static readonly string[] MainMenuItems =
         {
-            "1. Установить персонажа",
-            "2. Создать персонажа",
-            "3. Экипировать оружие",
-            "4. Экипировать защиту",
-            "5. Подробная информация о персонаже",
-            "6. Атаковать цель персонажем",
-            "7. Выйти"
+            "Установить персонажа",
+            "Создать персонажа",
+            "Экипировать оружие",
+            "Экипировать защиту",
+            "Экипировать бижутерию",
+            "Подробная информация о персонаже",
+            "Атаковать цель персонажем",
+            "Выйти"
         };
 
         private const string CharacterNotSelectedError = "Персонаж не выбран";
-        
-        private readonly CharacterPool _characterPool;
+
         private ICharacter _currentCharacter;
-        private readonly NPCPoll _npcPoll;
         private bool _interfaceWork;
 
         public ConsoleInterface()
         {
-            _characterPool = new CharacterPool();
-            _npcPoll = new NPCPoll();
             _interfaceWork = true;
         }
 
@@ -43,10 +39,11 @@ namespace TechRound_test_task.UserInterface
             while (_interfaceWork)
             {
                 PrintCurrentCharacter();
-                foreach (string item in MainMenuItems)
+                for (int index = 0; index < MainMenuItems.Length; index++)
                 {
-                    Console.WriteLine(item);
+                    Console.WriteLine($"{index + 1}. {MainMenuItems[index]}");
                 }
+
                 try
                 {
                     switch (SetInputIntRange(ConsoleInput.GetIntValue(), 1, 7))
@@ -64,12 +61,15 @@ namespace TechRound_test_task.UserInterface
                             SetProtection();
                             break;
                         case 5:
-                            ShowDetails();
+                            SetJewelry();
                             break;
                         case 6:
-                            AttackTarget();
+                            ShowDetails();
                             break;
                         case 7:
+                            AttackTarget();
+                            break;
+                        case 8:
                             _interfaceWork = false;
                             break;
                     }
@@ -83,38 +83,33 @@ namespace TechRound_test_task.UserInterface
 
         private void SetCharacter()
         {
-            if (_characterPool.Characters.Count == 0)
+            if (CharacterPool.CharacterCount == 0)
             {
                 throw new Exception("Невозможно выбрать персонажа, пока не создан хотя бы один");
             }
 
             Console.Clear();
-            List<ICharacter> characters = _characterPool.Characters;
-            ICharacter current;
-            for (int i = 0; i < characters.Count; i++)
-            {
-                current = characters[i];
-                Console.WriteLine($"{i + 1}. {current.CharacterName()} " +
-                                  $"{(current.GetWeapon() == null ? "" : "c оружием " + current.GetWeapon().Name)}");
-            }
+            Console.WriteLine("Выберите персонажа");
+            int i = 0;
+            PrintBasedCharacters(ref i);
+            PrintCustomCharacters(ref i);
 
-            _characterPool.SetCurrentCharacter(SetInputIntRange
-                (ConsoleInput.GetIntValue(), 1, characters.Count) - 1);
+            CharacterPool.SetCurrentCharacter(SetInputIntRange
+                (ConsoleInput.GetIntValue(), 1, i) - 1);
             Console.Clear();
-            Console.WriteLine($"Персонаж {_characterPool.GetCurrentCharacter().CharacterName()} установлен");
+            Console.WriteLine($"Персонаж {CharacterPool.GetCurrentCharacter().CharacterName()} установлен");
         }
 
         private void CreateCharacter()
         {
             Console.Clear();
             Console.WriteLine("Выберите класс персонажа");
-            ArrayList enumValues = new ArrayList(Enum.GetValues(typeof(CharacterEnum)));
-            for (int i = 0; i < enumValues.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}. {enumValues[i]?.ToString()}");
-            }
+            int i = 0;
+            PrintBasedCharacters(ref i);
 
-            int charClass = SetInputIntRange(ConsoleInput.GetIntValue(), 1, enumValues.Count);
+            CharacterClass charClass =
+                CharacterPool.BasedCharacters[SetInputIntRange(ConsoleInput.GetIntValue(), 1, i) - 1]
+                    .GetCharacterClass();
 
             Console.Write("Укажите здоровье персонажа: ");
             int charHitPoint = SetInputIntRange(ConsoleInput.GetIntValue());
@@ -131,11 +126,11 @@ namespace TechRound_test_task.UserInterface
             Console.Write("Укажите интеллект персонажа: ");
             int charIntellect = SetInputIntRange(ConsoleInput.GetIntValue());
 
-            _characterPool.CreateCharacter((CharacterEnum) charClass - 1, charHitPoint, charManaPoint,
+            CharacterPool.CreateCharacter(charClass, null, charHitPoint, charManaPoint,
                 charPower, charAgility, charIntellect);
 
             Console.Clear();
-            Console.WriteLine($"Персонаж {_characterPool.Characters[^1].CharacterName()} создан");
+            Console.WriteLine($"Персонаж {CharacterPool.CustomCharacters[^1].CharacterName()} создан");
         }
 
         private void SetWeapon()
@@ -145,14 +140,20 @@ namespace TechRound_test_task.UserInterface
             Console.Clear();
             Console.WriteLine("Выберете, каким оружием экипировать персонажа");
 
-            ArrayList enumValues = new ArrayList(Enum.GetValues(typeof(WeaponEnum)));
-            for (int i = 0; i < enumValues.Count; i++)
+            int i = 0;
+            foreach (var weapon in WeaponPool.BasedWeapons)
             {
-                Console.WriteLine($"{i + 1}. {enumValues[i]}");
+                Console.WriteLine($"{++i}. {weapon.Name}");
             }
-            
-            _characterPool.SetWeapon((WeaponEnum) SetInputIntRange(ConsoleInput.GetIntValue(),
-                1, enumValues.Count) - 1);
+
+            // ArrayList enumValues = new ArrayList(Enum.GetValues(typeof(WeaponEnum)));
+            // for (int i = 0; i < enumValues.Count; i++)
+            // {
+            //     Console.WriteLine($"{i + 1}. {enumValues[i]}");
+            // }
+
+            CharacterPool.SetWeapon(WeaponPool.BasedWeapons[SetInputIntRange(ConsoleInput.GetIntValue(),
+                1, WeaponPool.BasedCount) - 1]);
             Console.Clear();
             Console.WriteLine($"Оружие {_currentCharacter.GetWeapon().Name} экипировано на персонажа " +
                               $"{_currentCharacter.CharacterName()}");
@@ -161,25 +162,44 @@ namespace TechRound_test_task.UserInterface
         private void SetProtection()
         {
             UpdateCurrentCharacter();
-            
+
             Console.Clear();
             Console.WriteLine("Выберите экипировку");
-            
-            ArrayList enumValues = new ArrayList(Enum.GetValues(typeof(ProtectionEnum)));
-            for (int i = 0; i < enumValues.Count; i++)
+
+            int i = 0;
+            foreach (var protection in ProtectionPool.BasedProtections)
             {
-                Console.WriteLine($"{i + 1}. {enumValues[i]}");
+                Console.WriteLine($"{++i}. {protection.Name}");
             }
             
-            _characterPool.SetProtection((ProtectionEnum) SetInputIntRange(ConsoleInput.GetIntValue(),
-                1, enumValues.Count) - 1);
+            CharacterPool.SetProtection(ProtectionPool.BasedProtections[SetInputIntRange(ConsoleInput.GetIntValue(),
+                1, ProtectionPool.ProtectionCount) - 1]);
+            Console.Clear();
+            Console.WriteLine($"Предмет экипирован на персонажа {_currentCharacter.CharacterName()}");
+        }
+
+        private void SetJewelry()
+        {
+            UpdateCurrentCharacter();
+
+            Console.Clear();
+            Console.WriteLine("Выберите экипировку");
+
+            int i = 0;
+            foreach (var jewelry in JewelryPool.BasedJewelries)
+            {
+                Console.WriteLine($"{++i}. {jewelry.Name}");
+            }
+            
+            CharacterPool.SetJewelry(JewelryPool.BasedJewelries[SetInputIntRange(ConsoleInput.GetIntValue(),
+                1, ProtectionPool.ProtectionCount) - 1]);
             Console.Clear();
             Console.WriteLine($"Предмет экипирован на персонажа {_currentCharacter.CharacterName()}");
         }
 
         private void PrintCurrentCharacter()
         {
-            ICharacter currentCharacter = _characterPool.GetCurrentCharacter();
+            ICharacter currentCharacter = CharacterPool.GetCurrentCharacter();
             Console.Write("Текущий персонаж: ");
             Console.WriteLine(currentCharacter == null ? "не установлен" : currentCharacter.CharacterName());
         }
@@ -190,32 +210,35 @@ namespace TechRound_test_task.UserInterface
 
             Console.Clear();
             Console.WriteLine($"Имя: {_currentCharacter.CharacterName()}");
+            Console.WriteLine($"Класс: {_currentCharacter.CharacterName()}");
             Console.WriteLine($"Жив: {(_currentCharacter.Alive() ? "да" : "нет")}");
             Console.WriteLine($"Здоровье: {_currentCharacter.HitPoints()}");
             Console.WriteLine($"Мана: {_currentCharacter.ManaPoints()}");
             Console.WriteLine($"Основные хар. персонажа: {_currentCharacter.GetMainFeatures().ToString()}");
-            
+
             Weapon characterWeapon = _currentCharacter.GetWeapon();
             if (characterWeapon != null)
             {
                 Console.WriteLine($"Оружие: {characterWeapon.Name}");
-                Console.WriteLine($"Урон оружия: {characterWeapon.Damage}");
+                Console.WriteLine(
+                    $"Урон оружия основной/особый: {characterWeapon.Damage}/{characterWeapon.SpecialDamage}");
                 Console.WriteLine($"Требования к оружию: {_currentCharacter.GetWeapon()?.RequiredFeatures.ToString()}");
             }
-            
+
             foreach (var protection in _currentCharacter.GetProtection())
             {
                 if (protection == null) continue;
-                Console.WriteLine($"Название экипировки: {protection.ProtectionName}");
+                Console.WriteLine($"Название экипировки: {protection.Name}");
                 Console.WriteLine($"Характеристика\n{protection.Features.ToString()}");
             }
             
+            Console.WriteLine($"Бижутерия: {(_currentCharacter.GetJewelry() != null ? _currentCharacter.GetJewelry().Name : "нет")}");
         }
 
         private void AttackTarget()
         {
             UpdateCurrentCharacter();
-            if (_characterPool.Characters.Count == 0 || _npcPoll.NPCs.Count == 0)
+            if (CharacterPool.BasedCharacters.Count == 0 || NPCPoll.NPCs.Count == 0)
             {
                 throw new Exception("Нет целей для атаки");
             }
@@ -224,7 +247,7 @@ namespace TechRound_test_task.UserInterface
             Console.WriteLine("Выберите цель для атаки");
             ArrayList damaged = new ArrayList();
             int i = 0;
-            foreach (var character in _characterPool.Characters)
+            foreach (var character in CharacterPool.BasedCharacters)
             {
                 Console.WriteLine(
                     $"{i + 1}. {character.CharacterName()}{(character == _currentCharacter ? "(Вы)" : "")}");
@@ -232,7 +255,7 @@ namespace TechRound_test_task.UserInterface
                 i++;
             }
 
-            foreach (var npc in _npcPoll.NPCs)
+            foreach (var npc in NPCPoll.NPCs)
             {
                 Console.WriteLine($"{i + 1}. {npc.Name}");
                 damaged.Add(npc);
@@ -252,6 +275,22 @@ namespace TechRound_test_task.UserInterface
             }
         }
 
+        private void PrintBasedCharacters(ref int i)
+        {
+            foreach (var character in CharacterPool.BasedCharacters)
+            {
+                Console.WriteLine($"{++i}. {character.CharacterName()}");
+            }
+        }
+
+        private void PrintCustomCharacters(ref int i)
+        {
+            foreach (var character in CharacterPool.CustomCharacters)
+            {
+                Console.WriteLine($"{++i}. {character.CharacterName()}");
+            }
+        }
+
         private static int SetInputIntRange(int value, int minValue = int.MinValue, int maxValue = int.MaxValue)
         {
             if (value >= minValue && value <= maxValue) return value;
@@ -260,7 +299,7 @@ namespace TechRound_test_task.UserInterface
 
         private void UpdateCurrentCharacter()
         {
-            _currentCharacter = _characterPool.GetCurrentCharacter();
+            _currentCharacter = CharacterPool.GetCurrentCharacter();
             if (_currentCharacter == null)
             {
                 throw new Exception(CharacterNotSelectedError);

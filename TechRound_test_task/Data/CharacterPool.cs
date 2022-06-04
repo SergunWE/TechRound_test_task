@@ -1,67 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace TechRound_test_task
 {
-    public class CharacterPool
+    public static class CharacterPool
     {
-        private readonly List<ICharacter> _characters;
-        private ICharacter _currentCharacter;
+        private static readonly List<Character> _basedCharacters;
+        private static readonly List<Character> _customCharacters;
+        private static Character _currentCharacter;
 
-        public CharacterPool()
+        private static readonly int _basedCharacterCount;
+        private static int _customCharacterCount;
+
+        static CharacterPool()
         {
-            _characters = new List<ICharacter>();
+            _basedCharacters = new List<Character>();
+            _customCharacters = new List<Character>();
             _currentCharacter = null;
-            CreateCharacter(CharacterEnum.Shooter, hitPoints: 70, manaPoints: 10, agility: 15);
-            CreateCharacter(CharacterEnum.Warrior, hitPoints: 100, manaPoints: 20, power: 10);
-            CreateCharacter(CharacterEnum.Wizard, hitPoints: 60, manaPoints: 60, intellect: 9);
+            
+            _basedCharacters.Add(new Character(CharacterClass.Shooter, "Стрелок", 100, 100, agility: 15));
+            _basedCharacters.Add(new Character(CharacterClass.Warrior, "Воин", 100, 100, power: 10));
+            _basedCharacters.Add(new Character(CharacterClass.Wizard, "Маг", 100, 100, intellect: 9));
+
+            _basedCharacterCount = _basedCharacters.Count;
+            _customCharacterCount = 0;
         }
 
-        public void CreateCharacter(CharacterEnum characterType,
+        public static void CreateCharacter(CharacterClass characterType, string name = null,
             int hitPoints = 1, int manaPoints = 1, int power = 1, int agility = 1, int intellect = 1)
         {
-            switch (characterType)
+            if (string.IsNullOrEmpty(name))
             {
-                case CharacterEnum.Warrior:
-                    _characters.Add(new Warrior(hitPoints, manaPoints, power, agility, intellect));
-                    break;
-                case CharacterEnum.Shooter:
-                    _characters.Add(new Shooter(hitPoints, manaPoints, power, agility, intellect));
-                    break;
-                case CharacterEnum.Wizard:
-                    _characters.Add(new Wizard(hitPoints, manaPoints, power, agility, intellect));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(characterType), characterType, null);
+                name = characterType.ToString() + ++_customCharacterCount;
             }
+            
+            _customCharacters.Add(new Character(characterType, name, hitPoints, manaPoints, power, agility, intellect));
         }
 
-        public ICharacter GetCurrentCharacter()
+        public static ICharacter GetCurrentCharacter()
         {
             return _currentCharacter;
         }
 
-        public void SetCurrentCharacter(int index)
+        public static void SetCurrentCharacter(int index)
         {
-            _currentCharacter = _characters[index];
+            if (index >= _basedCharacterCount)
+            {
+                _currentCharacter = _customCharacters[index - _basedCharacterCount];
+                return;
+            }
+            _currentCharacter = _basedCharacters[index];
         }
 
-        public void SetWeapon(WeaponEnum weapon)
+        public static void SetWeapon(Weapon weapon)
         {
-            _currentCharacter.SetWeapon(WeaponFactory.GetWeapon(weapon));
+            _currentCharacter.SetWeapon(weapon);
         }
 
-        public void SetProtection(ProtectionEnum protection)
+        public static void SetProtection(Protection protection)
         {
-            _currentCharacter.SetProtected(ProtectionFactory.GetProtection(protection));
+            _currentCharacter.SetProtected(protection);
         }
 
-        public void SetInvulnerability()
+        public static void SetJewelry(Jewelry jewelry)
         {
-            _characters[_characters.IndexOf(_currentCharacter)] = 
-                new InvulnerabilityCharacter(_currentCharacter);
+            _currentCharacter.SetJewelry(jewelry);
         }
 
-        public List<ICharacter> Characters => _characters;
+        public static List<Character> BasedCharacters => _basedCharacters;
+        public static List<Character> CustomCharacters => _customCharacters;
+        public static int CharacterCount => _basedCharacterCount + _customCharacters.Count;
     }
 }

@@ -2,17 +2,19 @@
 
 namespace TechRound_test_task
 {
-    public abstract class Weapon
+    public class Weapon
     {
         private readonly string _name;
         private readonly int _damage;
         private readonly int _specialDamage;
-        private readonly ISpecialDamageState _specialDamageType;
+        private readonly ISpecialDamageType _specialDamageType;
         private readonly MainFeatures _requiredFeatures;
+        private readonly CharacterClass _characterClass;
 
-        protected Weapon(string name, int damage = 1, int specialDamage = 0, int power = 1, int agility = 1, 
-            int intellect = 1, ISpecialDamageState specialDamageType = null)
+        public Weapon(CharacterClass characterClass, string name, int damage = 1, int specialDamage = 0, int power = 1, int agility = 1, 
+            int intellect = 1, ISpecialDamageType specialDamageType = null)
         {
+            _characterClass = characterClass;
             _name = name;
             _damage = damage;
             _specialDamage = specialDamage;
@@ -24,6 +26,7 @@ namespace TechRound_test_task
         public int Damage => _damage;
         public int SpecialDamage => _specialDamage;
         public MainFeatures RequiredFeatures => _requiredFeatures;
-        public ISpecialDamageState SpecialDamageState => _specialDamageType;
+        public ISpecialDamageType SpecialDamageType => _specialDamageType;
+        public CharacterClass CharacterClass => _characterClass;
     }
 }

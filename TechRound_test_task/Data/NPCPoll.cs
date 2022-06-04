@@ -2,23 +2,24 @@
 
 namespace TechRound_test_task
 {
-    public class NPCPoll
+    public static class NPCPoll
     {
-        private readonly List<NPC> _npcs;
+        private static readonly List<NPC> _npcs;
 
-        public NPCPoll()
+        static NPCPoll()
         {
             _npcs = new List<NPC>();
+            
             CreateNPC();
             CreateNPC();
             CreateNPC();
         }
 
-        public void CreateNPC()
+        public static void CreateNPC()
         {
             _npcs.Add(new NPC());
         }
 
-        public List<NPC> NPCs => _npcs;
+        public static List<NPC> NPCs => _npcs;
     }
 }

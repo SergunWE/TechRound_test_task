@@ -1,6 +1,6 @@
 ﻿namespace TechRound_test_task
 {
-    public enum CharacterEnum
+    public enum CharacterClass
     {
         Warrior,
         Shooter,

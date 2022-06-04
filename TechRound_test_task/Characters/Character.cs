@@ -1,33 +1,39 @@
 ﻿using System;
+using System.Diagnostics;
 using InputOutput;
 
 namespace TechRound_test_task
 {
-    public abstract class Character<TWeaponType> : ICharacter where TWeaponType : Weapon
+    public class Character : ICharacter
     {
         private int _hitPoints;
         private int _manaPoints;
-        protected string Name;
+        private readonly string Name;
 
         private Weapon _weapon;
-        protected MainFeatures MainFeatures;
+        private readonly MainFeatures _mainFeatures;
 
         private bool _alive;
 
         private Protection _armor;
         private Protection _helmet;
-        private Protection _jewelry;
+        private Jewelry _jewelry;
 
-        protected Character(int hitPoints = 1, int manaPoints = 1, int power = 1, int agility = 1, int intellect = 1)
+        private readonly CharacterClass _characterClass;
+
+        public Character(CharacterClass characterClass, string name, int hitPoints = 1, int manaPoints = 1, int power = 1,
+            int agility = 1, int intellect = 1)
         {
             if (hitPoints <= 0 || manaPoints <= 0)
             {
                 throw new ArgumentException("Значение здоровья или маны не могут быть меньше 1");
             }
 
+            Name = name;
+            _characterClass = characterClass;
             _hitPoints = hitPoints;
             _manaPoints = manaPoints;
-            MainFeatures = new MainFeatures(power, agility, intellect);
+            _mainFeatures = new MainFeatures(power, agility, intellect);
             _alive = true;
         }
 
@@ -36,11 +42,27 @@ namespace TechRound_test_task
             return points > 0;
         }
 
-        public abstract void SetWeapon(Weapon weapon);
-
-        protected void SetWeapon(Weapon weapon, int feature, int requiredFeature, string featureName)
+        public void SetWeapon(Weapon weapon)
         {
-            if (weapon is not TWeaponType)
+            switch (_characterClass)
+            {
+                case CharacterClass.Warrior:
+                    SetWeapon(weapon, _mainFeatures.Power, weapon.RequiredFeatures.Power, "Сила");
+                    break;
+                case CharacterClass.Shooter:
+                    SetWeapon(weapon, _mainFeatures.Agility, weapon.RequiredFeatures.Agility, "Ловкость");
+                    break;
+                case CharacterClass.Wizard:
+                    SetWeapon(weapon, _mainFeatures.Intellect, weapon.RequiredFeatures.Intellect, "Интеллект");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void SetWeapon(Weapon weapon, int feature, int requiredFeature, string featureName)
+        {
+            if (weapon.CharacterClass != _characterClass)
             {
                 throw new ArgumentException("Оружие не соответствует классу персонажа");
             }
@@ -56,35 +78,39 @@ namespace TechRound_test_task
             _weapon = weapon;
         }
 
-        public abstract void SetProtected(Protection protection);
-
-        protected void SetProtected<T>(Protection protection) where T : ICharacter
+        public void SetProtected(Protection protection)
         {
+            if (protection.CharacterClass != _characterClass)
+            {
+                throw new ArgumentException("Экипировка не соответствует классу персонажа");
+            }
             switch (protection)
             {
-                case Armor<T>:
+                case Armor:
                     _armor = protection;
                     break;
-                case Helmet<T>:
+                case Helmet:
                     _helmet = protection;
                     break;
-                case Jewelry<T>:
-                    _jewelry = protection;
-                    break;
-                default:
-                    throw new ArgumentException("Экипировка не соответствует классу персонажа");
             }
+        }
+
+        public void SetJewelry(Jewelry jewelry)
+        {
+            _jewelry = jewelry;
         }
 
         public string CharacterName() => Name;
         public int HitPoints() => _hitPoints;
         public int ManaPoints() => _manaPoints;
-        public MainFeatures GetMainFeatures() => MainFeatures;
+        public MainFeatures GetMainFeatures() => _mainFeatures;
         public Weapon GetWeapon() => _weapon;
+        public CharacterClass GetCharacterClass() => _characterClass;
+        public Jewelry GetJewelry() => _jewelry;
 
         public Protection[] GetProtection()
         {
-            return new[] {_armor, _helmet, _jewelry};
+            return new[] {_armor, _helmet};
         }
 
         public bool Alive() => _alive;
@@ -100,10 +126,7 @@ namespace TechRound_test_task
             if (!_alive) return false;
 
             int damage = GetBaseDamage(weapon.Damage);
-            damage += weapon.SpecialDamageState.CalculateSpecialDamage(weapon.SpecialDamage, new[]
-            {
-                _armor, _helmet
-            });
+            damage += weapon.SpecialDamageType.CalculateSpecialDamage(weapon.SpecialDamage, GetProtection());
             _hitPoints -= damage;
             //сюда бы события
             ConsoleNotification.PrintNotice($"{Name} получил урон {damage} единиц");
@@ -120,14 +143,10 @@ namespace TechRound_test_task
         private int GetBaseDamage(int damage)
         {
             int protectionValue = 0;
-            if (_armor != null)
+            foreach (var protection in GetProtection())
             {
-                protectionValue += _armor.Features.ArmorStrength;
-            }
-
-            if (_helmet != null)
-            {
-                protectionValue += _helmet.Features.ArmorStrength;
+                if(protection == null) continue;
+                protectionValue += protection.Features.ArmorStrength;
             }
 
             int baseDamage = damage - protectionValue;

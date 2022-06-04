@@ -2,7 +2,7 @@
 
 namespace TechRound_test_task
 {
-    public struct MainFeatures
+    public readonly struct MainFeatures
     {
         private const string FeatureSetError = "Параметр не может быть меньше 1";
         public int Power { get; }

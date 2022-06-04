@@ -1,6 +1,6 @@
 ﻿namespace TechRound_test_task
 {
-    public class ChoppingDamage : ISpecialDamageState
+    public class ChoppingDamage : ISpecialDamageType
     {
         public int CalculateSpecialDamage(int specialDamage, Protection[] protections)
         {
