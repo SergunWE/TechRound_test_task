@@ -171,7 +171,7 @@ namespace TechRound_test_task.UserInterface
             {
                 Console.WriteLine($"{++i}. {protection.Name}");
             }
-            
+
             CharacterPool.SetProtection(ProtectionPool.BasedProtections[SetInputIntRange(ConsoleInput.GetIntValue(),
                 1, ProtectionPool.ProtectionCount) - 1]);
             Console.Clear();
@@ -190,7 +190,7 @@ namespace TechRound_test_task.UserInterface
             {
                 Console.WriteLine($"{++i}. {jewelry.Name}");
             }
-            
+
             CharacterPool.SetJewelry(JewelryPool.BasedJewelries[SetInputIntRange(ConsoleInput.GetIntValue(),
                 1, ProtectionPool.ProtectionCount) - 1]);
             Console.Clear();
@@ -231,8 +231,9 @@ namespace TechRound_test_task.UserInterface
                 Console.WriteLine($"Название экипировки: {protection.Name}");
                 Console.WriteLine($"Характеристика\n{protection.Features.ToString()}");
             }
-            
-            Console.WriteLine($"Бижутерия: {(_currentCharacter.GetJewelry() != null ? _currentCharacter.GetJewelry().Name : "нет")}");
+
+            Console.WriteLine(
+                $"Бижутерия: {(_currentCharacter.GetJewelry() != null ? _currentCharacter.GetJewelry().Name : "нет")}");
         }
 
         private void AttackTarget()

@@ -16,7 +16,7 @@ namespace TechRound_test_task
             _basedCharacters = new List<Character>();
             _customCharacters = new List<Character>();
             _currentCharacter = null;
-            
+
             _basedCharacters.Add(new Character(CharacterClass.Shooter, "Стрелок", 100, 100, agility: 15));
             _basedCharacters.Add(new Character(CharacterClass.Warrior, "Воин", 100, 100, power: 10));
             _basedCharacters.Add(new Character(CharacterClass.Wizard, "Маг", 100, 100, intellect: 9));
@@ -32,7 +32,7 @@ namespace TechRound_test_task
             {
                 name = characterType.ToString() + ++_customCharacterCount;
             }
-            
+
             _customCharacters.Add(new Character(characterType, name, hitPoints, manaPoints, power, agility, intellect));
         }
 
@@ -48,6 +48,7 @@ namespace TechRound_test_task
                 _currentCharacter = _customCharacters[index - _basedCharacterCount];
                 return;
             }
+
             _currentCharacter = _basedCharacters[index];
         }
 

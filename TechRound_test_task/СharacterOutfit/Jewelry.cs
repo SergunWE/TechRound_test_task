@@ -2,11 +2,13 @@
 {
     public class Jewelry
     {
-        private string _name;
+        private readonly string _name;
+
         public Jewelry(string name)
         {
             _name = name;
         }
+
         public string Name => _name;
     }
 }

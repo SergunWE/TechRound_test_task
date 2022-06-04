@@ -8,9 +8,10 @@
             int damage = specialDamage;
             foreach (var protection in protections)
             {
-                if(protection == null) continue;
+                if (protection == null) continue;
                 damage -= protection.Features.Magic;
             }
+
             return damage > 0 ? damage : 0;
         }
     }

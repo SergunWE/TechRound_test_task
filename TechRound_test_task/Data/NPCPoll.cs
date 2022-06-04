@@ -9,7 +9,7 @@ namespace TechRound_test_task
         static NPCPoll()
         {
             _npcs = new List<NPC>();
-            
+
             CreateNPC();
             CreateNPC();
             CreateNPC();

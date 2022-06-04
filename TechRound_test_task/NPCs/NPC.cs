@@ -13,7 +13,7 @@ namespace TechRound_test_task
         {
             Random = new Random((int) DateTime.UtcNow.Ticks);
         }
-        
+
         public NPC(string name = null)
         {
             if (string.IsNullOrEmpty(name))
@@ -24,7 +24,7 @@ namespace TechRound_test_task
 
             Name = name;
         }
-        
+
         public bool Attack(object target)
         {
             return false;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using InputOutput;
 
 namespace TechRound_test_task
@@ -8,7 +7,7 @@ namespace TechRound_test_task
     {
         private int _hitPoints;
         private int _manaPoints;
-        private readonly string Name;
+        private readonly string _name;
 
         private Weapon _weapon;
         private readonly MainFeatures _mainFeatures;
@@ -21,7 +20,8 @@ namespace TechRound_test_task
 
         private readonly CharacterClass _characterClass;
 
-        public Character(CharacterClass characterClass, string name, int hitPoints = 1, int manaPoints = 1, int power = 1,
+        public Character(CharacterClass characterClass, string name, int hitPoints = 1, int manaPoints = 1,
+            int power = 1,
             int agility = 1, int intellect = 1)
         {
             if (hitPoints <= 0 || manaPoints <= 0)
@@ -29,7 +29,7 @@ namespace TechRound_test_task
                 throw new ArgumentException("Значение здоровья или маны не могут быть меньше 1");
             }
 
-            Name = name;
+            _name = name;
             _characterClass = characterClass;
             _hitPoints = hitPoints;
             _manaPoints = manaPoints;
@@ -84,6 +84,7 @@ namespace TechRound_test_task
             {
                 throw new ArgumentException("Экипировка не соответствует классу персонажа");
             }
+
             switch (protection)
             {
                 case Armor:
@@ -100,7 +101,7 @@ namespace TechRound_test_task
             _jewelry = jewelry;
         }
 
-        public string CharacterName() => Name;
+        public string CharacterName() => _name;
         public int HitPoints() => _hitPoints;
         public int ManaPoints() => _manaPoints;
         public MainFeatures GetMainFeatures() => _mainFeatures;
@@ -129,10 +130,10 @@ namespace TechRound_test_task
             damage += weapon.SpecialDamageType.CalculateSpecialDamage(weapon.SpecialDamage, GetProtection());
             _hitPoints -= damage;
             //сюда бы события
-            ConsoleNotification.PrintNotice($"{Name} получил урон {damage} единиц");
+            ConsoleNotification.PrintNotice($"{_name} получил урон {damage} единиц");
             if (!CheckPoints(ref _hitPoints))
             {
-                ConsoleNotification.PrintNotice($"{Name} погиб");
+                ConsoleNotification.PrintNotice($"{_name} погиб");
                 _alive = false;
                 _hitPoints = 0;
             }
@@ -145,7 +146,7 @@ namespace TechRound_test_task
             int protectionValue = 0;
             foreach (var protection in GetProtection())
             {
-                if(protection == null) continue;
+                if (protection == null) continue;
                 protectionValue += protection.Features.ArmorStrength;
             }
 

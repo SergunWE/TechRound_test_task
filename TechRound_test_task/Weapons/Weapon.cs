@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TechRound_test_task
+﻿namespace TechRound_test_task
 {
     public class Weapon
     {
@@ -11,7 +9,8 @@ namespace TechRound_test_task
         private readonly MainFeatures _requiredFeatures;
         private readonly CharacterClass _characterClass;
 
-        public Weapon(CharacterClass characterClass, string name, int damage = 1, int specialDamage = 0, int power = 1, int agility = 1, 
+        public Weapon(CharacterClass characterClass, string name, int damage = 1, int specialDamage = 0, int power = 1,
+            int agility = 1,
             int intellect = 1, ISpecialDamageType specialDamageType = null)
         {
             _characterClass = characterClass;

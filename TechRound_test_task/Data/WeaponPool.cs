@@ -4,8 +4,8 @@ namespace TechRound_test_task
 {
     public static class WeaponPool
     {
-        private static List<Weapon> _basedWeapons;
-        private static int _basedWeaponCount;
+        private static readonly List<Weapon> _basedWeapons;
+        private static readonly int _basedWeaponCount;
 
         static WeaponPool()
         {
